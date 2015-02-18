@@ -1,5 +1,6 @@
 function [ out ] = rais_transform( thetas )
 %Generates the robot's homogeneous transform given angles in degrees
+% The input should be one 5-element row vector.
 
 % link,     a       alpha       d       theta
 % 1         0       90deg       67mm    theta1*
@@ -7,13 +8,18 @@ function [ out ] = rais_transform( thetas )
 % 3         78mm    0           0       theta3*
 % 4         0       90deg       0       theta4*
 % 5         0       0           142mm*  theta5*
+if(size(thetas)~=[1 5])
+    display('Input must be a 5-element row vector')
+    out = zeros(4);
+    return;
+end
 bounds = [ 90   90      90   90   90;
           -90  -30    -120  -30  -90];
 if(sum(thetas>bounds(1,:))+sum(thetas<bounds(2,:)))%programming trick
     display('Joint value out of bounds')
     out = zeros(4);%return a blank 4x4 matrix
     return
-else
+end
 theta1 = deg2rad(thetas(1));
 theta2 = deg2rad(thetas(2));
 theta3 = deg2rad(thetas(3));
