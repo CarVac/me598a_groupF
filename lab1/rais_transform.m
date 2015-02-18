@@ -1,9 +1,17 @@
 function [ out ] = rais_transform( thetas )
+%Generates the robot's homogeneous transform given angles in degrees
+
+% link,     a       alpha       d       theta
+% 1         0       90deg       67mm    theta1*
+% 2         90mm    0           0       theta2*
+% 3         78mm    0           0       theta3*
+% 4         0       90deg       0       theta4*
+% 5         0       0           142mm*  theta5*
 bounds = [ 90   90      90   90   90;
           -90  -30    -120  -30  -90];
-if(sum(thetas>bounds(1,:))+sum(thetas<bounds(2,:)))
+if(sum(thetas>bounds(1,:))+sum(thetas<bounds(2,:)))%programming trick
     display('Joint value out of bounds')
-    out = [];
+    out = zeros(4);%return a blank 4x4 matrix
     return
 else
 theta1 = deg2rad(thetas(1));
