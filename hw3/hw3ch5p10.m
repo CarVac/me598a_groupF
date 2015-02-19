@@ -32,7 +32,45 @@ r_proj = dot(r1, normVector)*normVector/(norm(normVector)^2);
 point_on_plane = point + r_proj;
 
 %Now we need to find out whether the point is inside the polygon or not.
-%Hmmm...
+%First, pick the direction with the least range, and ignore that dimension.
+minRange = min(range(polygon'));
+if(range(polygon(1,:)) == minRange)
+    poly2 = polygon(2:3,:);
+    point2 = point_on_plane(2:3);
+elseif(range(polygon(2,:)) == minRange)
+    poly2 = [polygon(1,:);polygon(3,:)];
+    point2 = [point_on_plane(1);point_on_plane(3)];
+else
+    poly2 = polygon(1:2,:);
+    point2 = point_on_plane(1:2);
+end
 
+%Next, we need to compute the number of circlings.
+polyCount = size(poly,2);
+sum = 0;
+for i = 1:polyCount
+    j = 1+i;
+    if(j>polyCount)
+        j = 1;
+    end
+    sum = sum + arccos(dot(poly2(:,i)-point2),poly2(:,j)-point2)/...
+        (norm(poly2(:,i)-point2)*norm(poly2(:,j)-point2));
+end
+%This sum will be zero if the point is outside the polygon.
+epsilon = 0.01;%radians
+if(abs(sum) < epsilon) %outside the polygon
+    %pick the shortest distance to any of the corners.
+    distance = norm(poly(:,1)-point);
+    for i = 2:polycount
+        if(norm(poly(:,i)-point) < distance)
+            distance = norm(poly(:,i)-point);
+        end
+    end
+    return;
+else %inside the polygon
+    %just get the distance between point_on_plane and point
+    distance = norm(point_on_plane-point);
+    return;
+end
 end
 
