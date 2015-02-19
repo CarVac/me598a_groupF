@@ -55,14 +55,14 @@ plot(Xlinks, Ylinks,'kd-')
 
 % Attractive and Repulsive Field Parameters
 eta = 0.15;              % controls the relative influence of the repulsive potential
-self_eta1=3.5;          % controls the relative influence of the self repulsive potential
+self_eta1=1;          % controls the relative influence of the self repulsive potential
 self_eta2=0.2;
 zeta = 1.5;             % controls the relative influence of the attractive potential   
 d = 0.6;                % distance that defines the transition from conic to parabolic attractive wells
 rho_o = 0.3;            % distance of influence for obstacles
-rho_1 = 0.9;            % distance of self influence 
+rho_1 = 0.5;            % distance of self influence 
 rho_2 = 1.3;            % distance of self influence 
-epsilon = 0.02;         % convergence tolerance
+epsilon = 0.01;         % convergence tolerance
 
 q_storage = [q_s];      % Initialize matrix of via points
 
@@ -71,15 +71,23 @@ M = norm(q-q_f);
 i = 0;
 % Gradient Descent Algorithm from p.179
     while M > epsilon
-        alpha = 0.1;         % step size
+        if(M < 0.5)%Adaptive step size
+            alpha = 0.01;
+        elseif(M<0.1)
+            alpha = 0.001;
+        elseif(M<0.01)
+            alpha = 0.00001;
+        else
+            alpha = 0.1;
+        end
         O1 = getO1(a1,q); 
         O2 = getO2(a1,a2,q); 
         O3 = getO3(a1,a2,a3,q); 
         
         %attraction to the joints
         F_att_1 = getF_att(O1,O1f,d,zeta); 
-        F_att_2 = getF_att(O2,O2f,d,zeta); 
-        F_att_3 = getF_att(O3,O3f,d,zeta); 
+        F_att_2 = getF_att(O2,O2f,d,zeta)/4; 
+        F_att_3 = getF_att(O3,O3f,d,zeta)/16; 
         
         %obstacle repulsion to the joints
         F_rep_1 = getF_rep(O1,obs1(:,1),obs1(:,2),eta,rho_o);
@@ -91,8 +99,10 @@ i = 0;
         
         %repulsion between joints
         self_rep_02 = getF_rep(O2,0,0,self_eta1,rho_1);               % joint 2 and origin
-        self_rep_03 = getF_rep(O3,0,0,self_eta2,rho_2);               % joint 3 and origin
-        self_rep_13 = getF_rep(O3,O1(1),O1(2),self_eta1,rho_1);       % joint 1 and 3
+        self_rep_03 = getF_rep(O3,0,0,self_eta1,rho_1);               % joint 3 and origin
+        %midpoint fake joint between 1 and 2
+        OM = O1+0.5*(O2-O1);
+        self_rep_13 = getF_rep(O3,OM(1),OM(2),self_eta1,rho_1/5);       % joint 1 and 3
         
         J1 = getJ1(q,a1);       % Jacobian for O1 evaluated at q
         J2 = getJ2(q,a1,a2);    % Jacobian for O2 evaluated at q
@@ -120,6 +130,7 @@ i = 0;
 %         delete(x4);
         
         i=i+1
+        M
 
     end
 % Plot Manipulator Starting Configuration again
