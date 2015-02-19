@@ -21,8 +21,8 @@ perpVector = [p2(2)-p1(2); p1(1)-p2(1)];
 %Distance from p to p1
 r1 = p1-p;
 %Projection of r1 onto perpVector
-r_projected = dot(r1,perpVector)*perpVector/(norm(perpVector)^2);
-p_on_line = p + r_projected;
+r_proj = dot(r1,perpVector)*perpVector/(norm(perpVector)^2);
+p_on_line = p + r_proj;
 
 %Distance from p_on_line to p1 divided by distance from p
 inside_ratio = (p_on_line - p1)./(p2 - p1);
