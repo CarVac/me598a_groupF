@@ -21,6 +21,11 @@ distance1 = hw3ch5p8(p, p1, p2)
 %something to make sure that we're not scanning regions outside the
 %polygon.
 
+poly = [[0;0;0] [1;0;0] [0;1;0]];
+point = [0.25;0.25;1];
+
+distance2 = hw3ch5p10(point,poly)
+
 %Problem 3: 5-13
 %Write a computer program to implement the path planner described in
 %section 5.2 for a 3-link planar arm moving among polygonal obstacles.

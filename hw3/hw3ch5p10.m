@@ -42,28 +42,37 @@ elseif(range(polygon(2,:)) == minRange)
     point2 = [point_on_plane(1);point_on_plane(3)];
 else
     poly2 = polygon(1:2,:);
-    point2 = point_on_plane(1:2);
+    point2 = point_on_plane(1:2)
 end
 
 %Next, we need to compute the number of circlings.
-polyCount = size(poly,2);
+polyCount = size(polygon,2);
 sum = 0;
-for i = 1:polyCount
+for i = 1:polyCount+1
     j = 1+i;
-    if(j>polyCount)
-        j = 1;
+    if(i>polyCount)
+        i = i - polyCount;
     end
-    sum = sum + arccos(dot(poly2(:,i)-point2),poly2(:,j)-point2)/...
-        (norm(poly2(:,i)-point2)*norm(poly2(:,j)-point2));
+    if(j>polyCount)
+        j = j - polyCount;
+    end
+    sum = sum + acos(dot(poly2(:,i)-point2,poly2(:,j)-point2)/...
+        (norm(poly2(:,i)-point2)*norm(poly2(:,j)-point2)));
 end
+sum
 %This sum will be zero if the point is outside the polygon.
 epsilon = 0.01;%radians
 if(abs(sum) < epsilon) %outside the polygon
-    %pick the shortest distance to any of the corners.
-    distance = norm(poly(:,1)-point);
-    for i = 2:polycount
-        if(norm(poly(:,i)-point) < distance)
-            distance = norm(poly(:,i)-point);
+    %pick the shortest distance to any of the line segments forming it.
+    distance = lineSegDist3d(point,polygon(:,1),polygon(:,2));
+    for i = 2:polyCount
+        j = 1+i;
+        if(j>polyCount)
+            j = j - polyCount;
+        end
+        dist2 = lineSegDist3d(point,polygon(:,i),polygon(:,j));
+        if(dist2 < distance)
+            distance = dist2;
         end
     end
     return;
