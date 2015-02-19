@@ -22,7 +22,7 @@ distance1 = hw3ch5p8(p, p1, p2)
 %polygon.
 
 poly = [[0;0;0] [1;0;0] [0;1;0]];
-point = [0.25;0.25;1];
+point = [.499;.5;1];
 
 distance2 = hw3ch5p10(point,poly)
 
@@ -49,6 +49,7 @@ distance2 = hw3ch5p10(point,poly)
 %Problem 6: 5-20
 %Compute an LSPB trajectory to satisfy the same requirements as Problem
 %5-19. Sketch the resulting position, velocity, and acceleration profiles.
+%LSPB = linear segment with parabolic blends
 
 %Problem 7: 5-22
 %Write a Matlab m-file, lspb.m, to generate an LSPB trajectory, given

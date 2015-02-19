@@ -33,7 +33,7 @@ point_on_plane = point + r_proj;
 
 %Now we need to find out whether the point is inside the polygon or not.
 %First, pick the direction with the least range, and ignore that dimension.
-minRange = min(range(polygon'));
+minRange = min(range(polygon'))
 if(range(polygon(1,:)) == minRange)
     poly2 = polygon(2:3,:);
     point2 = point_on_plane(2:3);
@@ -42,13 +42,13 @@ elseif(range(polygon(2,:)) == minRange)
     point2 = [point_on_plane(1);point_on_plane(3)];
 else
     poly2 = polygon(1:2,:);
-    point2 = point_on_plane(1:2)
+    point2 = point_on_plane(1:2);
 end
 
 %Next, we need to compute the number of circlings.
 polyCount = size(polygon,2);
 sum = 0;
-for i = 1:polyCount+1
+for i = 1:polyCount
     j = 1+i;
     if(i>polyCount)
         i = i - polyCount;
@@ -56,13 +56,60 @@ for i = 1:polyCount+1
     if(j>polyCount)
         j = j - polyCount;
     end
-    sum = sum + acos(dot(poly2(:,i)-point2,poly2(:,j)-point2)/...
-        (norm(poly2(:,i)-point2)*norm(poly2(:,j)-point2)));
+    p1 = poly2(:,i);
+    p2 = poly2(:,j);
+    
+    perpVector = [p2(2)-p1(2); p1(1)-p2(1)];
+    %Distance from p to p1
+    r1 = p1-point2;
+    %Projection of r1 onto perpVector
+    r_proj = dot(r1,perpVector)*perpVector/(norm(perpVector)^2);
+    p_on_line = point2 + r_proj;
+    
+    val = acos(dot(p1-point2,p2-point2)/...
+        (norm(p1-point2)*norm(p2-point2)));
+    
+    if(abs(p2(2)-p1(2))>abs(p2(1)-p1(1)))%more vertical than horizontal
+        if(p_on_line(1)>point2(1))%the line segment is to the right
+            if(p2(2)>p1(2))%cw
+                sum = sum + val;
+            elseif(p2(2)<p1(2))%ccw
+                sum = sum - val;
+            end
+        else
+            if(p2(2)<p1(2))%cw
+                sum = sum + val;
+            else%ccw
+                sum = sum - val;
+            end
+        end
+    else %more horizontal than vertical
+        if(p_on_line(2)>point2(2))%the line segment is above
+            if(p2(1)>p1(2))%rightward (ccw)
+                sum = sum - val;
+            else
+                sum = sum + val;
+            end
+        else
+            if(p2(1)<p1(1))%leftward (cw)
+                sum = sum - val;
+            else
+                sum = sum + val;
+            end
+        end
+    end
+    %sum = sum + val;
+    %if(val >= 0)%check if it's negative, and if so, negate the acos
+    %    sum = sum + acos(dot(poly2(:,i)-point2,poly2(:,j)-point2)/...
+    %    (norm(poly2(:,i)-point2)*norm(poly2(:,j)-point2)));
+    %else
+    %    sum = sum + acos(dot(poly2(:,i)-point2,poly2(:,j)-point2)/...
+    %    (norm(poly2(:,i)-point2)*norm(poly2(:,j)-point2)));
+    %end
 end
-sum
 %This sum will be zero if the point is outside the polygon.
 epsilon = 0.01;%radians
-if(abs(sum) < epsilon) %outside the polygon
+if(abs(sum) < epsilon) %outside the polygon or really really close
     %pick the shortest distance to any of the line segments forming it.
     distance = lineSegDist3d(point,polygon(:,1),polygon(:,2));
     for i = 2:polyCount
