@@ -4,18 +4,11 @@
 %Derive the equations needed to compute the shortest distance from point p
 %to the line segment connecting p1 and p2.
 
-%Basic ideas:
-%Compute the angles p p1 p2 and p p2 p1
-%If either is >90 degrees, then we pick the distance to that middle point.
-%If neither is >90 degrees, we compute the distance normal to the infinite
-%line connecting them.
+p1 = [1; 3];
+p2 = [5; 2];
+p = [0; 1];
 
-%Another idea:
-%Compute the projection of the point p onto the infinite line b/w p1 & p2.
-%If that point is between the two, then compute the distance normal to the
-%line.
-%If that point is not between the two, then compute the distance to the
-%nearest of the two.
+distance1 = hw3ch5p8(p, p1, p2)
 
 %Problem 2: 5-10
 %Derive the equations needed to compute the shortest distance from point p
