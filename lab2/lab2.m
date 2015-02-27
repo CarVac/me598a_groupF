@@ -23,7 +23,7 @@ theta5 = 0;
 
 transform = rais_transform([theta1, theta2, theta3, theta4, theta5]);
 
-position = transform*[0;0;0;1];
+position = transform*[0;0;0;1]
 %Result: [0; 0; 14.8425; 1]
 
 %Example 2.
@@ -37,7 +37,7 @@ theta5 = 0;
 
 transform = rais_transform([theta1, theta2, theta3, theta4, theta5]);
 
-position2 = transform*[0;0;0;1];
+position2 = transform*[0;0;0;1]
 %Result: [12.2047; 0; 2.6378; 1]
 
 %Example 3

@@ -20,6 +20,7 @@ if(sum(thetas>bounds(1,:))+sum(thetas<bounds(2,:)))%programming trick
     out = zeros(4);%return a blank 4x4 matrix
     return
 end
+thetas(1) = thetas(1) - 180;
 theta1 = deg2rad(thetas(1));
 theta2 = deg2rad(thetas(2));
 theta3 = deg2rad(thetas(3));
